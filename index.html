@@ -16,7 +16,7 @@
 
 <style>
     /* add some simple styling to the page */
-          body {
+    body {
         font-family: Arial, sans-serif;
         text-align: center;
         padding-top: 50px;
@@ -26,6 +26,9 @@
       }
       form {
         margin-top: 50px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
       input[type="number"] {
         font-size: 24px;
@@ -33,6 +36,9 @@
         border-radius: 5px;
         border: none;
         box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+        margin-bottom: 20px;
+        width: 80%;
+        max-width: 400px;
       }
       input[type="submit"] {
         width: 50%;
@@ -51,8 +57,14 @@
     input[type=submit]:hover {
       background-color: #45a049;
     }
-    
-    p {
+    h2 {
+      font-size: 36px;
+      border-radius: 5px;
+      background-color: #f2f2f2;
+      padding: 20px;
+    }
+    h3 {
+      font-size: 24px;
       border-radius: 5px;
       background-color: #f2f2f2;
       padding: 20px;
@@ -79,9 +91,9 @@
 
     </form> 
  
-    <p>Instructions:</p>
-    <p id = 'output'></p>
-    <p id = 'instructions'></p>
+    <h2>Instructions</h2>
+    <h3 id = 'output'></h3>
+    <h3 id = 'instructions'></h3>
     <py-script>
 
         from numpy import ceil
