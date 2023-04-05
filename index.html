@@ -1,33 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
+<py-config>
+    plugins = [
+      "https://pyscript.net/latest/plugins/python/py_tutor.py"
+    ]
+    [[fetch]]
+    files = ["./utils.py", "./todo.py"]
+</py-config>
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Some plotting</title>
-    <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
-    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
-    <py-env>
-        - matplotlib
-    </py-env>
-</head>
-
-<body>
-    <div id="matplotlib-lineplot"></div>
-    <py-script output="matplotlib-lineplot">
-        import matplotlib.pyplot as plt
-        fig, ax = plt.subplots()
-        # x axis
-        x = ["Python", "Scala", "Java", "Assembly"]
-        # y axis
-        y = [10, 5, 9, 12]
-        plt.plot(x, y, marker='o', linestyle='-', color='b')
-
-        plt.xlabel('Language')
-        plt.ylabel('Score')
-        plt.title('Language versus Vibe')
-        fig
-    </py-script>
-</body>
-
-</html>
+<py-script src="./todo.py"></py-script>
