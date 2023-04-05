@@ -1,9 +1,140 @@
-<py-config>
-    plugins = [
-      "https://pyscript.net/latest/plugins/python/py_tutor.py"
-    ]
-    [[fetch]]
-    files = ["./utils.py", "./todo.py"]
-</py-config>
 
-<py-script src="./todo.py"></py-script>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Simple Coffee App</title>
+
+    <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+    <py-env>
+        - numpy
+
+    </py-env>
+
+</head>
+
+<style>
+    /* add some simple styling to the page */
+          body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding-top: 50px;
+      }
+      h1 {
+        font-size: 48px;
+      }
+      form {
+        margin-top: 50px;
+      }
+      input[type="number"] {
+        font-size: 24px;
+        padding: 10px;
+        border-radius: 5px;
+        border: none;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+      }
+      input[type="submit"] {
+        width: 50%;
+        background-color: #8B5A2B;
+        color: white;
+        font-size: 24px;
+        padding: 10px 20px;
+        margin: 8px 0;
+        border-radius: 5px;
+        border: none;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+        color: white;
+        cursor: pointer;
+      }
+   
+    input[type=submit]:hover {
+      background-color: #45a049;
+    }
+    
+    p {
+      border-radius: 5px;
+      background-color: #f2f2f2;
+      padding: 20px;
+    }
+    </style>
+
+<body>
+    <h1>Chemex Coffee Instructions</h1>
+
+    <form onsubmit="return false">
+        <label for="cups">How many cups of coffee do you want?</label><br>
+        <input type="number" id="cups" name="cups" min="1" max="4" value="2" required><br>
+        <label for="ratio">What's your preferred water ratio?</label><br>
+        <input type="number" id="ratio" name="ratio" min="15" max="17" value="17" required><br>
+
+        <!-- <select name="ratio" id="ratio">
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+        </select> -->
+
+        <input pys-onClick="sub" type="submit" id="btn-form" value="Brew">
+
+
+    </form> 
+ 
+    <p>Instructions:</p>
+    <p id = 'output'></p>
+    <p id = 'instructions'></p>
+    <py-script>
+
+        from numpy import ceil
+
+        def cups_of_coffee_desired(cups):
+            cups_to_grams = 250
+            grams_of_water_needed = cups * cups_to_grams
+            return grams_of_water_needed
+        
+        def chemex(coffee_grams,water_ratio):
+            if coffee_grams > 70:
+                raise Exception("Too much coffee")
+            water = coffee_grams * water_ratio
+            if water > 900:
+                raise Exception("Too much water, risk of overflow")
+            bloom = 70
+            pour = water - bloom
+            if pour < 0:
+               raise Exception("Not enough water")
+            return [coffee_grams, bloom, pour, water]
+        
+        def brew(cups, water_ratio):
+            grams_of_water = cups_of_coffee_desired(cups)
+            grams_of_coffee = ceil(grams_of_water/water_ratio)
+            coffee = chemex(grams_of_coffee, water_ratio)
+            return coffee
+
+        def sub(*args,**kwargs):
+            cups_of_coffee = Element('cups').value
+            water_ratio = Element('ratio').value
+            coffee_beans, bloom, pour, water = brew(int(cups_of_coffee), int(water_ratio))
+            result_place = Element('output')
+            result_place.write(f"""
+            {cups_of_coffee} cups of coffee with a bean to water ratio of 1:{water_ratio}
+            """)
+            instruct = Element('instructions')
+            instruct.write(f"""
+            If you want {cups_of_coffee} cup(s) of coffee:
+            1. Grind {coffee_beans}g of coffee beans
+            2. Heat water to 197 - 204 degrees
+            3. Pour warm water to wet the filter, then pour out without removing the filter
+            4. Add ground coffee to filter
+            5. Pour {bloom}g of water and wait 60 seconds
+            6. Pour {pour}g of water in a circular motion without touching the filter 
+                NOTE:  Some suggest pouring {pour}g in three phases of {pour/3:0.0f}g each
+            7. Wait until dripping stops. 
+
+            """)
+
+
+
+    
+    </py-script>
+
+</body>
+</html>
