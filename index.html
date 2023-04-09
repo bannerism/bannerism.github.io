@@ -2,7 +2,9 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title>Simple Coffee App</title>
 
     <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
@@ -86,14 +88,30 @@
             <option value="17">17</option>
         </select> -->
 
-        <input pys-onClick="sub" type="submit" id="btn-form" value="Brew">
+        <input pys-onClick="main" type="submit" id="btn-form" value="Brew">
 
 
     </form> 
  
     <h2>Instructions</h2>
     <h3 id = 'output'></h3>
-    <h3 id = 'instructions'></h3>
+    <div id = 'instructions'>
+      <div class="container">
+        <div class="jumbotron">
+        </div>
+        <div class="row">
+          <div id="step1">
+          </div>
+          <div id="step2">
+          </div>
+          <div id="step3">
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    
     <py-script>
 
         from numpy import ceil
@@ -121,25 +139,28 @@
             coffee = chemex(grams_of_coffee, water_ratio)
             return coffee
 
-        def sub(*args,**kwargs):
+        def main(*args,**kwargs):
             cups_of_coffee = Element('cups').value
             water_ratio = Element('ratio').value
             coffee_beans, bloom, pour, water = brew(int(cups_of_coffee), int(water_ratio))
-            result_place = Element('output')
-            result_place.write(f"""
+            instruct = Element('output')
+            instruct.write(f"""
             {cups_of_coffee} cups of coffee with a bean to water ratio of 1:{water_ratio}
             """)
-            instruct = Element('instructions')
+            instruct = Element('step1')
             instruct.write(f"""
             If you want {cups_of_coffee} cup(s) of coffee:
-            1. Grind {coffee_beans}g of coffee beans
-            2. Heat water to 197 - 204 degrees
-            3. Pour warm water to wet the filter, then pour out without removing the filter
-            4. Add ground coffee to filter
-            5. Pour {bloom}g of water and wait 60 seconds
-            6. Pour {pour}g of water in a circular motion without touching the filter 
-                NOTE:  Some suggest pouring {pour}g in three phases of {pour/3:0.0f}g each
-            7. Wait until dripping stops. 
+            <li>Grind {coffee_beans}g of coffee beans then heat water to 197 - 204 degrees</li>
+            """)
+            instruct = Element('step2')
+            instruct.write(f"""
+            <li>Pour warm water to wet the filter, then pour out without removing the filter.
+               Add ground coffee to filter then pour {bloom}g of water and wait 60 seconds</li>
+            """)
+            instruct = Element('step3')
+            instruct.write(f"""
+
+            Next, pour {pour}g of water in a circular motion without touching the filter. Some suggest pouring {pour}g in three phases of {pour/3:0.0f}g each. Wait until dripping stops. Enjoy </li>
 
             """)
 
