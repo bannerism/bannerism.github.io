@@ -1,173 +1,35 @@
-
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>Simple Coffee App</title>
-
-    <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
-    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
-    <py-env>
-        - numpy
-
-    </py-env>
-
+<head>
+  <style>
+    .error {
+        color: red;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega@5"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega-lite@4.0.0"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega-embed@6"></script>
 </head>
-
-<style>
-    /* add some simple styling to the page */
-    body {
-        font-family: Arial, sans-serif;
-        text-align: center;
-        padding-top: 50px;
-      }
-      h1 {
-        font-size: 48px;
-      }
-      form {
-        margin-top: 50px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-      input[type="number"] {
-        font-size: 24px;
-        padding: 10px;
-        border-radius: 5px;
-        border: none;
-        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
-        margin-bottom: 20px;
-        width: 80%;
-        max-width: 400px;
-      }
-      input[type="submit"] {
-        width: 50%;
-        background-color: #8B5A2B;
-        color: white;
-        font-size: 24px;
-        padding: 10px 20px;
-        margin: 8px 0;
-        border-radius: 5px;
-        border: none;
-        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
-        color: white;
-        cursor: pointer;
-      }
-   
-    input[type=submit]:hover {
-      background-color: #45a049;
-    }
-    h2 {
-      font-size: 36px;
-      border-radius: 5px;
-      background-color: #f2f2f2;
-      padding: 20px;
-    }
-    h3 {
-      font-size: 24px;
-      border-radius: 5px;
-      background-color: #f2f2f2;
-      padding: 20px;
-    }
-    </style>
-
 <body>
-    <h1>Chemex Coffee Instructions</h1>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 400, "continuousHeight": 300}}, "data": {"name": "data-347f1284ea3247c0f55cb966abbdd2d8"}, "mark": "bar", "encoding": {"x": {"type": "quantitative", "aggregate": "average", "axis": {"title": "Average of b"}, "field": "b"}, "y": {"type": "nominal", "field": "a"}}, "height": 300, "width": 400, "$schema": "https://vega.github.io/schema/vega-lite/v4.0.0.json", "datasets": {"data-347f1284ea3247c0f55cb966abbdd2d8": [{"a": "C", "b": 2}, {"a": "C", "b": 7}, {"a": "C", "b": 4}, {"a": "D", "b": 1}, {"a": "D", "b": 2}, {"a": "D", "b": 6}, {"a": "E", "b": 8}, {"a": "E", "b": 4}, {"a": "E", "b": 7}]}};
+      var embedOpt = {"mode": "vega-lite"};
 
-    <form onsubmit="return false">
-        <label for="cups">How many cups of coffee do you want?</label><br>
-        <input type="number" id="cups" name="cups" min="1" max="4" value="2" required><br>
-        <label for="ratio">What's your preferred water ratio?</label><br>
-        <input type="number" id="ratio" name="ratio" min="15" max="17" value="17" required><br>
+      function showError(el, error){
+          el.innerHTML = ('<div class="error" style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
 
-        <!-- <select name="ratio" id="ratio">
-            <option value="15">15</option>
-            <option value="16">16</option>
-            <option value="17">17</option>
-        </select> -->
-
-        <input pys-onClick="main" type="submit" id="btn-form" value="Brew">
-
-
-    </form> 
- 
-    <h2>Instructions</h2>
-    <h3 id = 'output'></h3>
-    <div id = 'instructions'>
-      <div class="container">
-        <div class="jumbotron">
-        </div>
-        <div class="row">
-          <div id="step1">
-          </div>
-          <div id="step2">
-          </div>
-          <div id="step3">
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    
-    <py-script>
-
-        from numpy import ceil
-
-        def cups_of_coffee_desired(cups):
-            cups_to_grams = 250
-            grams_of_water_needed = cups * cups_to_grams
-            return grams_of_water_needed
-        
-        def chemex(coffee_grams,water_ratio):
-            if coffee_grams > 70:
-                raise Exception("Too much coffee")
-            water = coffee_grams * water_ratio
-            if water > 900:
-                raise Exception("Too much water, risk of overflow")
-            bloom = 70
-            pour = water - bloom
-            if pour < 0:
-               raise Exception("Not enough water")
-            return [coffee_grams, bloom, pour, water]
-        
-        def brew(cups, water_ratio):
-            grams_of_water = cups_of_coffee_desired(cups)
-            grams_of_coffee = ceil(grams_of_water/water_ratio)
-            coffee = chemex(grams_of_coffee, water_ratio)
-            return coffee
-
-        def main(*args,**kwargs):
-            cups_of_coffee = Element('cups').value
-            water_ratio = Element('ratio').value
-            coffee_beans, bloom, pour, water = brew(int(cups_of_coffee), int(water_ratio))
-            instruct = Element('output')
-            instruct.write(f"""
-            {cups_of_coffee} cups of coffee with a bean to water ratio of 1:{water_ratio}
-            """)
-            instruct = Element('step1')
-            instruct.write(f"""
-            If you want {cups_of_coffee} cup(s) of coffee:
-            <li>Grind {coffee_beans}g of coffee beans then heat water to 197 - 204 degrees</li>
-            """)
-            instruct = Element('step2')
-            instruct.write(f"""
-            <li>Pour warm water to wet the filter, then pour out without removing the filter.
-               Add ground coffee to filter then pour {bloom}g of water and wait 60 seconds</li>
-            """)
-            instruct = Element('step3')
-            instruct.write(f"""
-
-            Next, pour {pour}g of water in a circular motion without touching the filter. Some suggest pouring {pour}g in three phases of {pour/3:0.0f}g each. Wait until dripping stops. Enjoy </li>
-
-            """)
-
-
-
-    
-    </py-script>
-
+  </script>
 </body>
 </html>
