@@ -7,13 +7,8 @@
 
     <title>Simple Coffee App</title>
 
-    <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
-    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
-    <py-env>
-        - numpy
-        - paths:
-            - ./coffee_logic.py
-    </py-env>
+    <link rel="stylesheet" href="https://pyscript.net/releases/2026.7.1/core.css" />
+    <script type="module" src="https://pyscript.net/releases/2026.7.1/core.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -26,28 +21,18 @@
         <label for="ratio">What's your preferred water ratio?</label><br>
         <input type="number" id="ratio" name="ratio" min="15" max="17" value="17" required><br>
 
-        <!-- <select name="ratio" id="ratio">
-            <option value="15">15</option>
-            <option value="16">16</option>
-            <option value="17">17</option>
-        </select> -->
-
-        <input pys-onClick="main" type="submit" id="btn-form" value="Brew">
-
-
-    </form> 
+        <input type="submit" id="btn-form" value="Brew">
+    </form>
     <div id="error-message" style="color: red; margin-top: 10px;"></div>
- 
+
     <h2>Instructions</h2>
-    <div id = 'output'></div>
-    <div id = 'instructions-container'>
+    <div id="output"></div>
+    <div id="instructions-container">
       <div id="step1" class="instruction-step"></div>
       <div id="step2" class="instruction-step"></div>
       <div id="step3" class="instruction-step"></div>
     </div>
 
-    
-    <py-script src="./coffee_logic.py"></py-script>
-
+    <script type="py" src="./coffee_logic.py" config="./pyscript.json"></script>
 </body>
 </html>
