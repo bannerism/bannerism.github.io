@@ -3,9 +3,7 @@
 # Key functions include calculating water and coffee amounts, and generating step-by-step instructions.
 
 from numpy import ceil
-
-# Assuming Element is globally available from PyScript for DOM manipulation
-# from js import Element # This line would be needed if running outside PyScript with a bridge
+from pyscript import web, when
 
 def cups_of_coffee_desired(cups: int) -> float:
     """
@@ -86,30 +84,26 @@ def brew(cups: int, water_ratio: int) -> list[float]:
 
     return chemex(grams_of_coffee_needed, water_ratio)
 
-def main(*args, **kwargs) -> None:
+def clear_output() -> None:
+    """Clear all output sections on the page."""
+    web.page["error-message"].innerHTML = ""
+    web.page["output"].innerHTML = ""
+    web.page["step1"].innerHTML = ""
+    web.page["step2"].innerHTML = ""
+    web.page["step3"].innerHTML = ""
+
+@when("click", "#btn-form")
+def main(event) -> None:
     """
     Main function triggered by the "Brew" button in the HTML.
     It reads user inputs, calculates brewing instructions, and updates the webpage DOM.
     Handles errors by displaying messages on the webpage.
     """
-    # DOM element references
-    error_div = Element('error-message')
-    output_div = Element('output') # Summary of the brew
-    step1_div = Element('step1')
-    step2_div = Element('step2')
-    step3_div = Element('step3')
-
-    # Clear previous messages from all relevant divs
-    error_div.clear()
-    output_div.clear()
-    step1_div.clear()
-    step2_div.clear()
-    step3_div.clear()
+    clear_output()
 
     try:
-        # Retrieve and validate inputs
-        cups_input_str = Element('cups').value
-        ratio_input_str = Element('ratio').value
+        cups_input_str = web.page["cups"].value
+        ratio_input_str = web.page["ratio"].value
 
         if not cups_input_str or not ratio_input_str:
             raise Exception("Please enter values for both cups and water ratio.")
@@ -123,27 +117,25 @@ def main(*args, **kwargs) -> None:
         if cups_of_coffee <= 0:
             raise Exception("Number of cups must be a positive number.")
         if water_ratio <= 0:
-             raise Exception("Water ratio must be a positive number.")
+            raise Exception("Water ratio must be a positive number.")
 
-        # Perform brewing calculations
         coffee_beans, bloom_water, pour_water, total_water = brew(cups_of_coffee, water_ratio)
 
-        # Update DOM with summary and instructions
-        output_div.write(f"""
+        web.page["output"].innerHTML = f"""
         <h3>Summary</h3>
         <p>{cups_of_coffee} cup(s) of coffee with a bean to water ratio of 1:{water_ratio}.</p>
         <p>This will use <strong>{coffee_beans:.0f}g of coffee</strong> and <strong>{total_water:.0f}g of water</strong>.</p>
-        """)
+        """
 
-        step1_div.write(f"""
+        web.page["step1"].innerHTML = f"""
         <h4>Step 1: Preparation</h4>
         <ul>
             <li>Grind <strong>{coffee_beans:.0f}g</strong> of coffee beans to a medium-coarse consistency.</li>
             <li>Heat water to 197-204°F (92-96°C).</li>
         </ul>
-        """)
+        """
 
-        step2_div.write(f"""
+        web.page["step2"].innerHTML = f"""
         <h4>Step 2: Bloom</h4>
         <ul>
             <li>Place the Chemex filter in the brewer.</li>
@@ -152,9 +144,9 @@ def main(*args, **kwargs) -> None:
             <li>Pour <strong>{bloom_water:.0f}g</strong> of hot water evenly over the grounds, ensuring all coffee is wet.</li>
             <li>Wait for 60 seconds for the coffee to "bloom" (release CO2).</li>
         </ul>
-        """)
+        """
 
-        step3_div.write(f"""
+        web.page["step3"].innerHTML = f"""
         <h4>Step 3: Brew</h4>
         <ul>
             <li>Slowly pour the remaining <strong>{pour_water:.0f}g</strong> of water in a circular or spiral motion.</li>
@@ -163,12 +155,11 @@ def main(*args, **kwargs) -> None:
             <li>Once all water is added, allow the coffee to drip completely through. This may take several minutes.</li>
             <li>Remove the filter and enjoy your freshly brewed Chemex coffee!</li>
         </ul>
-        """)
+        """
 
     except Exception as e:
-        error_div.write(f"<strong>Error:</strong> {str(e)}")
-        # Ensure instruction sections are cleared if an error occurs during processing
-        output_div.clear()
-        step1_div.clear()
-        step2_div.clear()
-        step3_div.clear()
+        web.page["error-message"].innerHTML = f"<strong>Error:</strong> {str(e)}"
+        web.page["output"].innerHTML = ""
+        web.page["step1"].innerHTML = ""
+        web.page["step2"].innerHTML = ""
+        web.page["step3"].innerHTML = ""
